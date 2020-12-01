@@ -1,0 +1,12 @@
+# Build Directories
+target/
+debug/
+
+# Cargo and Temporary Files
+Cargo.lock
+**/*.rs.bk
+
+# Binaries and Input Files
+*.out
+*.txt
+
