@@ -32,7 +32,7 @@ namespace StarBattleSharp
             // Ensure that the file exists
             if (!File.Exists(inputFile))
             {
-                Console.WriteLine(string.Format("Cannot find input file {0:}", inputFile));
+                Console.WriteLine($"Cannot find input file {inputFile}");
                 return -1;
             }
 
@@ -46,13 +46,9 @@ namespace StarBattleSharp
             Console.WriteLine("Input Grid:");
             Console.WriteLine(battleGrid.ToString());
 
-            //GridInstance inst = new GridInstance(battleGrid);
-            //inst.Solve();
-            //return -1;
-
             // Start the solve parameters
             Console.WriteLine();
-            Console.WriteLine(string.Format("Solving on {0:} threads...", numThreads));
+            Console.WriteLine($"Solving on {numThreads} threads...");
 
             // Save the start time to be able to check the total elapsed time
             DateTime startTime = DateTime.UtcNow;
@@ -60,20 +56,18 @@ namespace StarBattleSharp
             // Initialize and start each of the threads
             for (int i = 0; i < numThreads; ++i)
             {
-                ThreadSolverState state = new ThreadSolverState()
-                {
-                    BattleGrid = battleGrid,
-                    ThreadIndex = i,
-                    ThreadCount = numThreads,
-                    abort = false
-                };
+                ThreadSolverState state = new(
+                    battleGrid: battleGrid,
+                    threadIndex: i,
+                    threadCount: numThreads);
+
                 results[i] = new SolverManager(state);
                 threads[i] = new Thread(new ThreadStart(results[i].Run));
                 threads[i].Start();
             }
 
             // Define the resulting solved grid and continue conditions
-            GridInstance solvedGrid = null;
+            GridInstance? solvedGrid = null;
             bool anyRunning = true;
 
             // Loop while the problem hasn't been solved
@@ -134,11 +128,11 @@ namespace StarBattleSharp
                 Console.Write("Solved in ");
                 if (dT.TotalSeconds <= 90)
                 {
-                    Console.WriteLine(string.Format("{0:} seconds", dT.TotalSeconds));
+                    Console.WriteLine($"{dT.TotalSeconds} seconds");
                 }
                 else
                 {
-                    Console.WriteLine(string.Format("{0:} minutes", dT.TotalMinutes));
+                    Console.WriteLine($"{dT.TotalMinutes} minutes");
                 }
 
                 return 0;

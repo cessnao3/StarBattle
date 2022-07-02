@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace StarBattleSharp
 {
@@ -261,17 +262,15 @@ namespace StarBattleSharp
         /// </summary>
         /// <param name="threadState">optional threadState parameters for solving with a thread state; otherwise null</param>
         /// <returns>solved GridInstance if a solution exists; otherwise null</returns>
-        public GridInstance Solve(ThreadSolverState threadState=null)
+        public GridInstance? Solve(ThreadSolverState? threadState = null)
         {
             // Preallocate grid parameters for each star
-            GridInstance[] grids = new GridInstance[StarsCountDesired * Size + 1];
-            for (int i = 0; i < grids.Length; ++i)
-            {
-                grids[i] = new GridInstance(this);
-            }
+            GridInstance[] grids = Enumerable.Range(0, StarsCountDesired * Size + 1)
+                .Select(_ => new GridInstance(this))
+                .ToArray();
 
             // Determine the starting index based on the threadState parameter
-            int startIndex = (threadState != null) ? threadState.ThreadIndex : 0;
+            int startIndex = threadState?.ThreadIndex ?? 0;
 
             // Call the recursive SolveGrid function
             return grids[0].SolveGrid(
@@ -287,7 +286,7 @@ namespace StarBattleSharp
         /// <param name="grids">preallocated arrays for each star level</param>
         /// <param name="threadState">optional threadState parameters for solving with a thread state; otherwise null</param>
         /// <returns>solved GridInstance if a solution exists; otherwise null</returns>
-        protected GridInstance SolveGrid(int startIndex, GridInstance[] grids, ThreadSolverState threadState=null)
+        protected GridInstance? SolveGrid(int startIndex, GridInstance[] grids, ThreadSolverState? threadState = null)
         {
             // Check for completion
             if (starCount == StarsCountDesired * Size)
@@ -347,7 +346,7 @@ namespace StarBattleSharp
                         col: IndexToCol(i));
 
                     // Attempt ot solve the grid
-                    GridInstance solve_check = inst.SolveGrid(
+                    GridInstance? solve_check = inst.SolveGrid(
                         startIndex: i,
                         grids: grids,
                         threadState: threadState);

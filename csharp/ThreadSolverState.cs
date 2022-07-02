@@ -30,11 +30,14 @@ namespace StarBattleSharp
         /// <summary>
         /// Defines the initial thread solver state
         /// </summary>
-        public ThreadSolverState()
+        public ThreadSolverState(
+            BattleGrid battleGrid,
+            int threadIndex,
+            int threadCount)
         {
-            BattleGrid = null;
-            ThreadIndex = 0;
-            ThreadCount = 0;
+            BattleGrid = battleGrid;
+            ThreadIndex = threadIndex;
+            ThreadCount = threadCount;
         }
     }
 }

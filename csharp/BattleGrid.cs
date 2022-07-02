@@ -81,7 +81,7 @@ namespace StarBattleSharp
             {
                 gridSizeNormal * gridSizeNormal => GridType.Normal,
                 gridSizeLarge * gridSizeLarge => GridType.Large,
-                _ => throw new ArgumentException(string.Format("unknown grid type for input length of {0:}", gridInput.Length))
+                _ => throw new ArgumentException($"unknown grid type for input length of {gridInput.Length}")
             };
 
             // Init the minimum shape cell count
@@ -100,17 +100,11 @@ namespace StarBattleSharp
                 _ => throw new Exception("Unknown GridType")
             };
 
-            // Check that the input grid is not null
-            if (gridInput == null)
-            {
-                throw new ArgumentException("input grid must not be null");
-            }
-
             // Save the iniput grid to the current grid
-            Grid = gridInput;
+            Grid = gridInput ?? throw new ArgumentException("input grid must not be null");
 
             // Define a dictionary for shape ID parameters
-            Dictionary<int, int> shape_id_count = new Dictionary<int, int>();
+            Dictionary<int, int> shape_id_count = new();
 
             // Check for validity of the grid
             for (int i = 0; i < Size; ++i)
@@ -151,7 +145,7 @@ namespace StarBattleSharp
                     // Raise error for invalid parameters
                     if (!any_match)
                     {
-                        throw new ArgumentException(string.Format("input grid shape ID {0:} has isolated cell", sid));
+                        throw new ArgumentException($"input grid shape ID {sid} has isolated cell");
                     }
                 }
             }
@@ -159,30 +153,30 @@ namespace StarBattleSharp
             // Check that the correct number of shapes were found with each having at least three cells
             if (shape_id_count.Count != Size)
             {
-                throw new ArgumentException(string.Format("input grid contains unexpected {0:} number of cells", shape_id_count.Count));
+                throw new ArgumentException($"input grid contains unexpected {shape_id_count.Count} number of cells");
             }
 
             foreach (KeyValuePair<int, int> pair in shape_id_count)
             {
                 if (pair.Value < MinShapeCells)
                 {
-                    throw new ArgumentException(string.Format("shape {0:} has {1:} cells < {2:} minimum", pair.Key, pair.Value, MinShapeCells));
+                    throw new ArgumentException($"shape {pair.Key} has {pair.Value} cells < {MinShapeCells} minimum");
                 }
             }
 
             // Save the shape IDs
-            List<int> shapeIDs = new List<int>(shape_id_count.Keys);
+            List<int> shapeIDs = new(shape_id_count.Keys);
             shapeIDs.Sort();
             for (int i = 0; i < Size; ++i)
             {
                 if (shapeIDs[i] != i)
                 {
-                    throw new ArgumentException(string.Format("invalid shape ID {0:} is not contiguous", shapeIDs[i]));
+                    throw new ArgumentException("invalid shape ID {shapeIDs[i]} is not contiguous");
                 }
             }
 
             // Update the shape index parameters
-            List<List<int>> mShapeIndices = new List<List<int>>();
+            List<List<int>> mShapeIndices = new();
             for (int i = 0; i < Size; ++i)
             {
                 mShapeIndices.Add(new List<int>());
@@ -271,10 +265,10 @@ namespace StarBattleSharp
         public override string ToString()
         {
             // Define the overall builder
-            StringBuilder total_builder = new StringBuilder();
+            StringBuilder total_builder = new();
 
             // Define the header
-            StringBuilder header_builder = new StringBuilder();
+            StringBuilder header_builder = new();
             header_builder.Append('|');
             for (int i = 0; i < Size; ++i)
             {
@@ -294,8 +288,8 @@ namespace StarBattleSharp
             for (int i = 0; i < Size; ++i)
             {
                 // Define inner string builder values
-                StringBuilder current_line = new StringBuilder();
-                StringBuilder next_line = new StringBuilder();
+                StringBuilder current_line = new();
+                StringBuilder next_line = new();
 
                 // Append the starting values to each
                 current_line.Append('|');
@@ -356,7 +350,7 @@ namespace StarBattleSharp
             text = text.Replace("\n", "").Replace("\r", "").Replace(" ", "").Trim();
 
             // Convert to ID parameters
-            List<int> gridArray = new List<int>();
+            List<int> gridArray = new();
             for (int i = 0; i < text.Length; ++i)
             {
                 // Extract the current character
@@ -381,7 +375,7 @@ namespace StarBattleSharp
                     'd' => 13,
                     'e' => 14,
                     'f' => 15,
-                    _ => throw new Exception(string.Format("Invalid character {0:} provided", c))
+                    _ => throw new Exception($"Invalid character {c} provided")
                 };
 
                 // Add the character to the grid array

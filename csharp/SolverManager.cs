@@ -10,7 +10,7 @@ namespace StarBattleSharp
         /// <summary>
         /// The solved grid instance, or null if no solution
         /// </summary>
-        public GridInstance SolvedGrid { get; protected set; }
+        public GridInstance? SolvedGrid { get; protected set; }
 
         /// <summary>
         /// Boolean state for the solved-state of the grid
@@ -31,7 +31,7 @@ namespace StarBattleSharp
         /// <summary>
         /// Mutex to provide read-access to thread parameters for setting/reading the solve grid state
         /// </summary>
-        readonly public Mutex mutex = new Mutex();
+        readonly public Mutex mutex = new();
 
         /// <summary>
         /// Defines a new SolverManager instance with a given state
@@ -49,13 +49,13 @@ namespace StarBattleSharp
         public void Run()
         {
             // Define the solve instance with the input battle grid
-            GridInstance solverInst = new GridInstance(InputState.BattleGrid);
+            GridInstance solverInst = new(InputState.BattleGrid);
 
             // Attempt to solve the thread
             try
             {
                 // Run the solver with the given thread state
-                GridInstance bgSolved = solverInst.Solve(threadState: InputState);
+                GridInstance? bgSolved = solverInst.Solve(threadState: InputState);
 
                 // Check if the solution is valid
                 if (bgSolved != null)
